@@ -14,4 +14,4 @@ app.include_router(router)
 
 @app.get("/")
 def root_redirect():
-    return RedirectResponse(url="/network-profiles/feed")
+    return RedirectResponse(url="/network-activities/feed")
