@@ -716,3 +716,48 @@ body::-webkit-scrollbar {
     color: var(--text-muted);
     font-size: 11px;
 }
+
+.draft-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.draft-input {
+    background-color: var(--card-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.draft-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Кнопка удаления на карточках в каталоге */
+.card-delete-form {
+    margin-top: 8px;
+}
+
+.btn-delete-outline {
+    width: 100%;
+    padding: 8px;
+    background-color: transparent;
+    border: 1px solid #FF4B72;
+    color: #FF4B72;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-delete-outline:hover {
+    background-color: #FF4B72;
+    color: #fff;
+}

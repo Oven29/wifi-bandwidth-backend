@@ -11,56 +11,63 @@
 <body>
     <div class="mobile-container">
         <div class="top-nav-header">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6.66482 1L1.41422 6.2506L6.66482 11.5012M1.41422 6.2506H11.9154" stroke="#8F9BB3"
-                    stroke-width="2" stroke-linecap="round" />
-            </svg>
             Управление активностью
         </div>
 
         <div class="page-content draft-page-content">
 
+            {% if activity %}
             <label class="input-label">Предпросмотр медиа</label>
             <div class="media-preview-container">
                 <video class="media-preview-item" autoplay loop muted playsinline
                     poster="http://localhost:9000/media/telek.png">
+                    <source src="{{ activity.preview_video_url or 'http://localhost:9000/media/telek.mp4' }}"
+                        type="video/mp4">
+                </video>
+                <img class="media-preview-item"
+                    src="{{ activity.preview_image_url or 'http://localhost:9000/media/telek.png' }}" alt="Preview"
+                    onerror="this.src='http://localhost:9000/media/telek.png'">
+            </div>
+
+            <form action="/network-activities/publish" method="POST" class="draft-form">
+                <input type="hidden" name="activity_id" value="{{ activity.id }}">
+
+                <label class="input-label">Название профиля</label>
+                <div class="custom-box">
+                    {{ activity.activity_title }}
+                </div>
+
+                <label class="input-label">Краткая информация</label>
+                <textarea name="activity_description" class="draft-input" rows="3" placeholder="Введите описание..."
+                    required>{{ activity.activity_description if activity.activity_description != '' else '' }}</textarea>
+
+                <label class="input-label">Средний трафик (Мбит/с)</label>
+                <input type="number" name="average_traffic_mbps" class="draft-input"
+                    value="{{ activity.average_traffic_mbps }}" required>
+
+                <label class="input-label">Макс. задержка (мс)</label>
+                <input type="number" name="max_latency_ms" class="draft-input" value="{{ activity.max_latency_ms }}"
+                    required>
+
+                <button type="submit" class="btn-save-outline">Опубликовать</button>
+            </form>
+
+            {% else %}
+            <label class="input-label">Предпросмотр (по умолчанию)</label>
+            <div class="media-preview-container">
+                <video class="media-preview-item" autoplay loop muted playsinline>
                     <source src="http://localhost:9000/media/telek.mp4" type="video/mp4">
                 </video>
                 <img class="media-preview-item" src="http://localhost:9000/media/telek.png" alt="Preview">
             </div>
 
-            <label class="input-label">Фотография/Видео</label>
-            <div class="custom-box upload-box">
-                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path opacity="0.5"
-                        d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15"
-                        stroke="var(--accent-cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M12 16V3M12 3L16 7.375M12 3L8 7.375" stroke="var(--accent-cyan)" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                Загрузить
-            </div>
+            <form action="/network-activities/create" method="POST" class="draft-form">
+                <label class="input-label">Название профиля</label>
+                <input type="text" name="activity_title" class="draft-input" placeholder="Новая активность" required>
 
-            <!-- Поля ввода -->
-            <label class="input-label">Название профиля</label>
-            <div class="custom-box draft-text-box" contenteditable="true">
-                Новая активность
-            </div>
-
-            <label class="input-label">Краткая информация</label>
-            <div class="custom-box draft-text-box" contenteditable="true">
-                Введите описание...
-            </div>
-
-            <label class="input-label">Средний трафик (Мбит/с)</label>
-            <div class="custom-box draft-text-box" contenteditable="true">
-                25
-            </div>
-
-            <label class="input-label">Макс. задержка (мс)</label>
-            <div class="custom-box draft-text-box" contenteditable="true">
-                100
-            </div>
+                <button type="submit" class="btn-save-outline">Далее</button>
+            </form>
+            {% endif %}
 
         </div>
     </div>

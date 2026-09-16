@@ -26,8 +26,7 @@
                 <div class="slider-container">
                     <span class="slider-label">0</span>
                     <input type="range" name="filter_traffic" class="custom-slider" min="0" max="150" step="5"
-                        value="{{ filter_traffic or 150 }}"
-                        oninput="document.getElementById('slider-val').innerText = this.value">
+                        value="{{ filter_traffic or 150 }}">
                     <span class="slider-label">150</span>
                 </div>
 
@@ -36,21 +35,32 @@
 
             <div class="catalog-grid">
                 {% for item in activities %}
-                <a href="/network-activities/feed?activity_id={{ item.activity_id }}" class="card">
-                    <img src="{{ item.preview_image_url }}" alt="Preview"
-                        onerror="this.src='http://localhost:9000/media/telek.png'">
+                <div class="card">
+                    <a href="/network-activities/feed?activity_id={{ item.activity_id }}"
+                        style="text-decoration: none; color: inherit; display: block;">
+                        <img src="{{ item.preview_image_url }}" alt="Preview"
+                            onerror="this.src='http://localhost:9000/media/telek.png'">
+                    </a>
 
                     <div class="card-body">
-                        <div class="card-header">
-                            <div class="card-wifi">⏱ {{ item.max_latency_ms }} мс</div>
-                            <div class="card-likes">♡ {{ item.likes_count }}</div>
-                        </div>
-                        <div>
-                            <p class="card-title">{{ item.activity_title }}</p>
-                            <div class="card-speed">⚡ {{ item.average_traffic_mbps }} Мбит/с</div>
-                        </div>
+                        <a href="/network-activities/feed?activity_id={{ item.activity_id }}"
+                            style="text-decoration: none; color: inherit; display: block;">
+                            <div class="card-header">
+                                <div class="card-wifi">⏱ {{ item.max_latency_ms }} мс</div>
+                                <div class="card-likes">♡ {{ item.likes_count }}</div>
+                            </div>
+                            <div>
+                                <p class="card-title">{{ item.activity_title }}</p>
+                                <div class="card-speed">⚡ {{ item.average_traffic_mbps }} Мбит/с</div>
+                            </div>
+                        </a>
+
+                        <form action="/network-activities/{{ item.activity_id }}/delete" method="POST"
+                            class="card-delete-form">
+                            <button type="submit" class="btn-delete-outline">Удалить</button>
+                        </form>
                     </div>
-                </a>
+                </div>
                 {% endfor %}
             </div>
 
