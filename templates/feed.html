@@ -10,74 +10,88 @@
 </head>
 
 <body>
-    <div class="mobile-container" style="padding-bottom: 0;">
-        
-        <div class="feed-top-logo">ПРОПУСКНАЯ СПОСОБНОСТЬ</div>
+    <div class="mobile-container feed-container">
+
+        <div class="feed-top-logo">NETWORK ACTIVITIES</div>
 
         <div class="feed-video-container">
             <video autoplay loop muted playsinline>
-                <source src="{{ profile.preview_video_url }}" type="video/mp4">
+                <source src="{{ activity.preview_video_url }}" type="video/mp4">
             </video>
         </div>
 
-        <div class="feed-overlay" style="bottom: 75px; z-index: 10; padding-bottom: 20px;">
-            <h2 style="margin: 0 0 12px 0;">{{ profile.profile_title }}</h2>
-            <div class="badge">⚡ Требуется {{ profile.required_bandwidth_mbps }} Мбит/с</div>
-            <div class="specs">
-                {{ profile.recommended_wifi_standard }} • Буфер {{ profile.min_device_ram_mb }} МБ • Приоритет: {{ profile.traffic_priority_level }}
+        <div class="feed-overlay feed-overlay-split">
+
+            <div class="feed-left-col">
+                <h2 class="feed-title">{{ activity.activity_title }}</h2>
+
+                <div class="feed-desc-wrapper">
+                    <input type="checkbox" id="expand-desc" class="desc-toggle">
+
+                    <div class="feed-desc">{{ activity.activity_description }}</div>
+
+                    <label for="expand-desc" class="feed-more">Еще</label>
+                </div>
             </div>
 
-            <!-- Добавлен flex для выравнивания кнопок в одну линию -->
-            <div class="actions" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px;">
-                
-                <!-- Добавлен flex для выравнивания сердечка и текста -->
-                <div class="btn-like" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="feed-right-col">
+
+                <div class="feed-action-item">
+                    <svg width="28" height="24" viewBox="0 0 16 14" fill="#FF4B72" xmlns="http://www.w3.org/2000/svg">
                         <path
-                            d="M1.64547 2.59989C1.22508 3.21118 1.00001 3.9356 1 4.67747C1 6.21082 2.00008 7.34416 3.00015 8.34417L6.67244 11.8989C6.79846 12.04 6.95307 12.1526 7.126 12.2294C7.29892 12.3061 7.48619 12.3452 7.67537 12.344C7.86456 12.3428 8.05132 12.3013 8.22325 12.2224C8.39519 12.1435 8.54836 12.0289 8.67259 11.8862L12.3342 8.34417C13.3343 7.34416 14.3344 6.20415 14.3344 4.67747C14.3379 3.93397 14.1149 3.20702 13.6951 2.59339C13.2752 1.97975 12.6784 1.50852 11.9841 1.24243C11.2898 0.976333 10.5309 0.927992 9.80843 1.10384C9.08597 1.27968 8.4342 1.67138 7.93987 2.22678C7.90494 2.26412 7.86271 2.29389 7.81581 2.31425C7.7689 2.3346 7.71831 2.3451 7.66718 2.3451C7.61605 2.3451 7.56546 2.3346 7.51855 2.31425C7.47164 2.29389 7.42942 2.26412 7.39449 2.22678C6.8986 1.67496 6.24698 1.28653 5.52569 1.1128C4.8044 0.939065 4.04737 0.988196 3.35459 1.2537C2.66181 1.51921 2.06586 1.98861 1.64547 2.59989Z"
-                            stroke="#FF4B72" stroke-width="2" stroke-linecap="round" />
+                            d="M1.64547 2.59989C1.22508 3.21118 1.00001 3.9356 1 4.67747C1 6.21082 2.00008 7.34416 3.00015 8.34417L6.67244 11.8989C6.79846 12.04 6.95307 12.1526 7.126 12.2294C7.29892 12.3061 7.48619 12.3452 7.67537 12.344C7.86456 12.3428 8.05132 12.3013 8.22325 12.2224C8.39519 12.1435 8.54836 12.0289 8.67259 11.8862L12.3342 8.34417C13.3343 7.34416 14.3344 6.20415 14.3344 4.67747C14.3379 3.93397 14.1149 3.20702 13.6951 2.59339C13.2752 1.97975 12.6784 1.50852 11.9841 1.24243C11.2898 0.976333 10.5309 0.927992 9.80843 1.10384C9.08597 1.27968 8.4342 1.67138 7.93987 2.22678C7.90494 2.26412 7.86271 2.29389 7.81581 2.31425C7.7689 2.3346 7.71831 2.3451 7.66718 2.3451C7.61605 2.3451 7.56546 2.3346 7.51855 2.31425C7.47164 2.29389 7.42942 2.26412 7.39449 2.22678C6.8986 1.67496 6.24698 1.28653 5.52569 1.1128C4.8044 0.939065 4.04737 0.988196 3.35459 1.2537C2.66181 1.51921 2.06586 1.98861 1.64547 2.59989Z" />
                     </svg>
-                    <span>{{ likes_count }}</span>
+                    <span class="feed-action-text">{{ likes_count }}</span>
                 </div>
 
-                <!-- Добавлен flex для выравнивания текста и стрелки -->
-                <a href="/network-profiles/feed?profile_id={{ next_profile_id }}&next=true" class="btn-next" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span>Следующий профиль</span>
-                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 5.0838H9.1676M5.0838 9.1676L9.1676 5.0838L5.0838 1" stroke="#141526"
+                <div class="feed-param">
+                    <div class="feed-param-icon">⚡</div>
+                    <div class="feed-param-val">{{ activity.average_traffic_mbps }}</div>
+                </div>
+
+                <div class="feed-param">
+                    <div class="feed-param-icon">⏱</div>
+                    <div class="feed-param-val">{{ activity.max_latency_ms }}</div>
+                </div>
+
+                <a href="/network-activities/feed?activity_id={{ next_activity_id }}&next=true"
+                    class="btn-save-outline btn-next-circle">
+                    <svg width="14" height="14" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 5.0838H9.1676M5.0838 9.1676L9.1676 5.0838L5.0838 1" stroke="#00F3BB"
                             stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </a>
+
             </div>
         </div>
-
-        <div class="bottom-bar" style="z-index: 999; position: fixed; bottom: 0; width: 100%; max-width: 390px;">
-            <a href="/network-profiles/feed" class="tab-item active">
-                <svg width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12.6676 6.83355L17.0204 9.73522C17.0832 9.77698 17.1561 9.80093 17.2314 9.80453C17.3067 9.80813 17.3815 9.79124 17.448 9.75567C17.5144 9.7201 17.57 9.66717 17.6087 9.60252C17.6475 9.53787 17.6679 9.46392 17.668 9.38855V2.55855C17.668 2.48524 17.6487 2.41322 17.612 2.34976C17.5752 2.2863 17.5224 2.23366 17.4589 2.19714C17.3953 2.16062 17.3232 2.14152 17.2499 2.14177C17.1765 2.14202 17.1046 2.1616 17.0413 2.19855L12.6676 4.75022M2.66678 1H11.0008C11.9213 1 12.6676 1.74619 12.6676 2.66667V9.33333C12.6676 10.2538 11.9213 11 11.0008 11H2.66678C1.74624 11 0.999985 10.2538 0.999985 9.33333V2.66667C0.999985 1.74619 1.74624 1 2.66678 1Z"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                Лента
-            </a>
-            <a href="/network-profiles/draft" class="tab-item">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0.999985 6.834H12.668M6.83398 1V12.668" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" />
-                </svg>
-                Добавление
-            </a>
-            <a href="/network-profiles/catalog" class="tab-item">
-                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M8.5 1V16M1 8.5H16M2.66667 1H14.3333C15.2538 1 16 1.74619 16 2.66667V14.3333C16 15.2538 15.2538 16 14.3333 16H2.66667C1.74619 16 1 15.2538 1 14.3333V2.66667C1 1.74619 1.74619 1 2.66667 1Z"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                Плитка
-            </a>
-        </div>
-
     </div>
+
+    <div class="bottom-bar" style="z-index: 999; position: fixed; bottom: 0; width: 100%; max-width: 390px;">
+        <a href="/network-activities/feed" class="tab-item active">
+            <svg width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12.6676 6.83355L17.0204 9.73522C17.0832 9.77698 17.1561 9.80093 17.2314 9.80453C17.3067 9.80813 17.3815 9.79124 17.448 9.75567C17.5144 9.7201 17.57 9.66717 17.6087 9.60252C17.6475 9.53787 17.6679 9.46392 17.668 9.38855V2.55855C17.668 2.48524 17.6487 2.41322 17.612 2.34976C17.5752 2.2863 17.5224 2.23366 17.4589 2.19714C17.3953 2.16062 17.3232 2.14152 17.2499 2.14177C17.1765 2.14202 17.1046 2.1616 17.0413 2.19855L12.6676 4.75022M2.66678 1H11.0008C11.9213 1 12.6676 1.74619 12.6676 2.66667V9.33333C12.6676 10.2538 11.9213 11 11.0008 11H2.66678C1.74624 11 0.999985 10.2538 0.999985 9.33333V2.66667C0.999985 1.74619 1.74624 1 2.66678 1Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Лента
+        </a>
+        <a href="/network-activities/draft" class="tab-item">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.999985 6.834H12.668M6.83398 1V12.668" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" />
+            </svg>
+            Добавление
+        </a>
+        <a href="/network-activities/catalog" class="tab-item">
+            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8.5 1V16M1 8.5H16M2.66667 1H14.3333C15.2538 1 16 1.74619 16 2.66667V14.3333C16 15.2538 15.2538 16 14.3333 16H2.66667C1.74619 16 1 15.2538 1 14.3333V2.66667C1 1.74619 1.74619 1 2.66667 1Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Плитка
+        </a>
+    </div>
+
 </body>
 
 </html>
