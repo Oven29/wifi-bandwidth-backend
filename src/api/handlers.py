@@ -133,9 +133,17 @@ async def publish_activity(
 
 
 @router.get("/network-activities/catalog")
-async def get_catalog(request: Request, filter_traffic: int | None = None, db: AsyncSession = Depends(get_db)):
+async def get_catalog(
+    request: Request,
+    search: str = "",
+    filter_traffic: int | None = None,
+    db: AsyncSession = Depends(get_db)
+):
     stmt = select(NetworkActivity).where(
         NetworkActivity.status == ActivityStatus.PUBLISHED)
+
+    if search:
+        stmt = stmt.where(NetworkActivity.activity_title.ilike(f"%{search}%"))
 
     if filter_traffic is not None:
         stmt = stmt.where(
@@ -168,6 +176,7 @@ async def get_catalog(request: Request, filter_traffic: int | None = None, db: A
         name="catalog.html",
         context={
             "activities": filtered_activities,
+            "search": search,
             "filter_traffic": filter_traffic if filter_traffic is not None else ""
         }
     )

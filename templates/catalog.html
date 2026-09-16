@@ -18,6 +18,18 @@
         <div class="page-content draft-page-content">
 
             <form action="/network-activities/catalog" method="GET" class="filter-form">
+
+                <div class="search-wrapper" style="margin-bottom: 16px;">
+                    <svg class="search-icon" width="12" height="12" viewBox="0 0 14 14" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M13.0001 13.0001L10.1068 10.1068M11.6667 6.33333C11.6667 9.27885 9.27885 11.6667 6.33333 11.6667C3.38781 11.6667 1 9.27885 1 6.33333C1 3.38781 3.38781 1 6.33333 1C9.27885 1 11.6667 3.38781 11.6667 6.33333Z"
+                            stroke="#8F9BB3" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <input type="text" name="search" class="search-bar-custom" placeholder="Поиск по названию..."
+                        value="{{ search }}">
+                </div>
+
                 <label class="input-label" style="margin-top: 0; text-align: center;">
                     Макс. объем трафика: <span id="slider-val" style="color: var(--accent-cyan); font-size: 14px;">{{
                         filter_traffic or 150 }}</span> Мбит/с
@@ -26,11 +38,12 @@
                 <div class="slider-container">
                     <span class="slider-label">0</span>
                     <input type="range" name="filter_traffic" class="custom-slider" min="0" max="150" step="5"
-                        value="{{ filter_traffic or 150 }}">
+                        value="{{ filter_traffic or 150 }}"
+                        oninput="document.getElementById('slider-val').innerText = this.value">
                     <span class="slider-label">150</span>
                 </div>
 
-                <button type="submit" class="btn-save-outline filter-btn">Применить</button>
+                <button type="submit" class="btn-save-outline filter-btn">Найти и применить</button>
             </form>
 
             <div class="catalog-grid">
@@ -60,6 +73,10 @@
                             <button type="submit" class="btn-delete-outline">Удалить</button>
                         </form>
                     </div>
+                </div>
+                {% else %}
+                <div style="text-align: center; color: var(--text-muted); grid-column: span 2; padding: 20px;">
+                    Ничего не найдено
                 </div>
                 {% endfor %}
             </div>
