@@ -1,51 +1,46 @@
-
-network_activity_profiles_db = [
+network_activities_db = [
     {
-        "profile_id": 1,
-        "profile_title": "4K Стриминг",
-        "required_bandwidth_mbps": 100,
-        "recommended_wifi_standard": "Wi-Fi 6 (802.11ax)",
-        "min_device_ram_mb": 512,
-        "traffic_priority_level": "High",
-        "profile_status": "published",
+        "activity_id": 1,
+        "activity_title": "4K Стриминг",
+        "average_traffic_mbps": 25,
+        "max_latency_ms": 100,
+        "activity_status": "published",
         "preview_image_url": "http://localhost:9000/media/telek.png",
         "preview_video_url": "http://localhost:9000/media/telek.mp4",
-        "liked_user_ids": [101, 102, 105]
+        "liked_user_ids": [101, 102, 105],
+        "activity_description": "Просмотр видео высокого разрешения на Smart TV и стриминговых платформах. Требует стабильного соединения без буферизации для комфортного просмотра."
     },
     {
-        "profile_id": 2,
-        "profile_title": "Онлайн Игры",
-        "required_bandwidth_mbps": 50,
-        "recommended_wifi_standard": "Wi-Fi 6 (802.11ax)",
-        "min_device_ram_mb": 256,
-        "traffic_priority_level": "Critical",
-        "profile_status": "published",
+        "activity_id": 2,
+        "activity_title": "Онлайн Игры",
+        "average_traffic_mbps": 5,
+        "max_latency_ms": 20,
+        "activity_status": "published",
         "preview_image_url": "http://localhost:9000/media/games.png",
         "preview_video_url": "http://localhost:9000/media/games.mp4",
-        "liked_user_ids": [104, 105, 106, 107]
+        "liked_user_ids": [104, 105, 106, 107],
+        "activity_description": "Многопользовательские соревновательные игры. Критична минимальная задержка (пинг) и отсутствие потери пакетов для плавного и отзывчивого геймплея."
     },
     {
-        "profile_id": 3,
-        "profile_title": "Умные IoT Девайсы",
-        "required_bandwidth_mbps": 25,
-        "recommended_wifi_standard": "Wi-Fi 4 (802.11n)",
-        "min_device_ram_mb": 128,
-        "traffic_priority_level": "Standard",
-        "profile_status": "published",
+        "activity_id": 3,
+        "activity_title": "Умные IoT Девайсы",
+        "average_traffic_mbps": 1,
+        "max_latency_ms": 500,
+        "activity_status": "published",
         "preview_image_url": "http://localhost:9000/media/iot.png",
         "preview_video_url": "http://localhost:9000/media/iot.mp4",
-        "liked_user_ids": [108]
+        "liked_user_ids": [108],
+        "activity_description": "Фоновая работа датчиков, умных ламп, пылесосов и розеток. Трафик минимален, но требуется постоянное поддержание множества одновременных подключений."
     },
     {
-        "profile_id": 4,
-        "profile_title": "Торрент & Облачный бэкап",
-        "required_bandwidth_mbps": 300,
-        "recommended_wifi_standard": "Wi-Fi 6 (802.11ax)",
-        "min_device_ram_mb": 1024,
-        "traffic_priority_level": "Background",
-        "profile_status": "deleted",
+        "activity_id": 4,
+        "activity_title": "Торрент & Бэкапы",
+        "average_traffic_mbps": 100,
+        "max_latency_ms": 1000,
+        "activity_status": "deleted",
         "preview_image_url": "http://localhost:9000/media/torrent.png",
         "preview_video_url": "http://localhost:9000/media/torrent.mp4",
-        "liked_user_ids": []
+        "liked_user_ids": [],
+        "activity_description": "Загрузка больших объемов данных в фоновом режиме. Максимально утилизирует доступную пропускную способность, что может снижать скорость другим устройствам."
     }
 ]
