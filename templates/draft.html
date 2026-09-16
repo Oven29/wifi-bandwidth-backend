@@ -1,0 +1,102 @@
+<!-- Read-only form for draft profiles -->
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="mobile-container">
+        <div class="top-nav-header">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.66482 1L1.41422 6.2506L6.66482 11.5012M1.41422 6.2506H11.9154" stroke="#8F9BB3"
+                    stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Новый профиль активности
+        </div>
+
+        <div class="page-content" style="padding-top: 0;">
+
+            <label class="input-label">Фотография/Видео</label>
+            <div class="custom-box upload-box">
+                <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.5"
+                        d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15"
+                        stroke="var(--accent-cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M12 16V3M12 3L16 7.375M12 3L8 7.375" stroke="var(--accent-cyan)" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Загрузить
+            </div>
+
+            <label class="input-label">Название профиля</label>
+            <div class="custom-box">
+                Домашний офис
+            </div>
+
+            <label class="input-label">Тип активности</label>
+            <div class="custom-box" style="justify-content: space-between;">
+                Видеостриминг
+            </div>
+
+            <label class="input-label">Количество устройств</label>
+            <div class="custom-box">
+                <span style="font-weight: bold; font-size: 16px;">4</span>
+                <div class="counter-controls">
+                    <button class="counter-btn" disabled>−</button>
+                    <button class="counter-btn" disabled>+</button>
+                </div>
+            </div>
+
+            <label class="input-label">Качество</label>
+            <div class="quality-toggles">
+                <div class="quality-btn">SD</div>
+                <div class="quality-btn">HD</div>
+                <div class="quality-btn">FHD</div>
+                <div class="quality-btn active">4K</div>
+            </div>
+
+            <div class="result-box">
+                <div style="color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: bold;">
+                    Расчётная потребность</div>
+                <div class="result-value">100 Мбит/с</div>
+            </div>
+
+            <button class="btn-save-outline" disabled>Сохранить</button>
+        </div>
+    </div>
+
+
+    <div class="bottom-bar">
+        <a href="/network-profiles/feed" class="tab-item">
+            <svg width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12.6676 6.83355L17.0204 9.73522C17.0832 9.77698 17.1561 9.80093 17.2314 9.80453C17.3067 9.80813 17.3815 9.79124 17.448 9.75567C17.5144 9.7201 17.57 9.66717 17.6087 9.60252C17.6475 9.53787 17.6679 9.46392 17.668 9.38855V2.55855C17.668 2.48524 17.6487 2.41322 17.612 2.34976C17.5752 2.2863 17.5224 2.23366 17.4589 2.19714C17.3953 2.16062 17.3232 2.14152 17.2499 2.14177C17.1765 2.14202 17.1046 2.1616 17.0413 2.19855L12.6676 4.75022M2.66678 1H11.0008C11.9213 1 12.6676 1.74619 12.6676 2.66667V9.33333C12.6676 10.2538 11.9213 11 11.0008 11H2.66678C1.74624 11 0.999985 10.2538 0.999985 9.33333V2.66667C0.999985 1.74619 1.74624 1 2.66678 1Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Лента
+        </a>
+        <a href="/network-profiles/draft" class="tab-item active">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.999985 6.834H12.668M6.83398 1V12.668" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" />
+            </svg>
+            Добавление
+        </a>
+        <a href="/network-profiles/catalog" class="tab-item">
+            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8.5 1V16M1 8.5H16M2.66667 1H14.3333C15.2538 1 16 1.74619 16 2.66667V14.3333C16 15.2538 15.2538 16 14.3333 16H2.66667C1.74619 16 1 15.2538 1 14.3333V2.66667C1 1.74619 1.74619 1 2.66667 1Z"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            Плитка
+        </a>
+    </div>
+    </div>
+</body>
+
+</html>

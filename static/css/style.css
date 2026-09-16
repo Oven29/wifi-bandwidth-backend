@@ -1,0 +1,499 @@
+/* Speedtest by Ookla color palette variables */
+:root {
+    --bg-primary: #141526;
+    --card-surface: #1E2238;
+    --accent-cyan: #00F3BB;
+    --accent-hover: #00C295;
+    --text-main: #FFFFFF;
+    --text-muted: #8F9BB3;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+/* Global mobile container styles */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 390px;
+    height: 100vh;
+    background-color: var(--bg-primary);
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 72px;
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 390px;
+    height: 72px;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--card-surface);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 999;
+    box-sizing: border-box;
+}
+
+.tab-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.tab-item.active {
+    color: var(--accent-cyan);
+    font-weight: bold;
+}
+
+/* Feed View Styles (Reels format) */
+.feed-video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.feed-video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.feed-overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding: 40px 20px 20px 20px;
+    box-sizing: border-box;
+}
+
+.badge {
+    background: rgba(0, 243, 187, 0.15);
+    color: var(--accent-cyan);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.specs {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.actions {
+    /* action-row */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+
+    width: 342px;
+    height: 37px;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+
+}
+
+.btn-next {
+    background-color: var(--accent-cyan);
+    color: var(--bg-primary);
+    padding: 10px 20px;
+    border-radius: 20px;
+
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Forms and Catalog Styles */
+.page-content {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.form-group {
+    background-color: var(--card-surface);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.btn-disabled {
+    background-color: #2B314E;
+    color: var(--text-muted);
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* Grid Layout */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: var(--card-surface);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-main);
+    display: block;
+}
+
+.card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 6px 0;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input {
+    flex: 1;
+    background-color: var(--card-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.search-form button {
+    background-color: var(--accent-cyan);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 0 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.top-nav-header {
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 8px;
+    margin-top: 16px;
+}
+
+/* Страница: Лента */
+.feed-top-logo {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    z-index: 10;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-like {
+
+
+
+    box-sizing: border-box;
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 14px;
+    gap: 6px;
+
+    /* width: 72px;
+    height: 32px; */
+
+    background: #1E2238;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+
+    border: 1px solid var(--border-subtle);
+    color: #F8B4D9;
+    padding: 10px 16px;
+    /* border-radius: 8px; */
+    font-weight: bold;
+}
+
+.btn-next {
+    background-color: var(--accent-cyan);
+    color: var(--bg-primary);
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 12px;
+}
+
+/* Страница: Черновик (Форма) */
+.custom-box {
+    background-color: var(--card-surface);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.upload-box {
+    justify-content: flex-start;
+    gap: 10px;
+    color: var(--accent-cyan);
+    cursor: pointer;
+}
+
+.counter-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.counter-btn {
+    background: #141526;
+    color: var(--accent-cyan);
+    border: none;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.quality-toggles {
+    display: flex;
+    gap: 8px;
+}
+
+.quality-btn {
+    flex: 1;
+    background-color: var(--card-surface);
+    color: var(--text-muted);
+    border: none;
+    padding: 12px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.quality-btn.active {
+    background-color: var(--accent-cyan);
+    color: var(--bg-primary);
+}
+
+.result-box {
+    background-color: var(--card-surface);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 24px;
+}
+
+.result-value {
+    font-size: 38px;
+    font-weight: bold;
+    color: var(--accent-cyan);
+    margin-top: 8px;
+}
+
+.btn-save-outline {
+    background-color: var(--card-surface);
+    color: var(--accent-cyan);
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 24px;
+}
+
+/* Страница: Каталог */
+.search-bar-custom {
+    background-color: var(--card-surface);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 16px;
+    width: 100%;
+    color: var(--text-main);
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.catalog-grid .card {
+    background-color: var(--card-surface);
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+}
+
+.catalog-grid .card img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.card-wifi {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.card-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 6px 0;
+    line-height: 1.2;
+}
+
+.card-speed {
+    color: var(--accent-cyan);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.mobile-container,
+body {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.mobile-container::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--card-surface);
+    border-radius: 10px;
+    padding-left: 16px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 48px;
+}
+
+.search-icon {
+    flex-shrink: 0;
+    display: block;
+}
+
+.search-bar-custom {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    padding: 0 16px 0 12px;
+    font-size: 15px;
+    outline: none;
+    height: 100%;
+    margin: 0;
+    line-height: 48px;
+}
+
+.search-bar-custom::placeholder {
+    color: var(--text-muted);
+}
