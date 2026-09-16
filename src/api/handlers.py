@@ -1,22 +1,39 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, text
 
-from src.data.collections import network_activities_db
+from src.db.session import get_db
+from src.models.network_activity import NetworkActivity, ActivityStatus
+from src.models.like import Like
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/network-activities/feed")
-def get_feed(request: Request, activity_id: int | None = None, next: bool = False):
-    published = [
-        a for a in network_activities_db if a["activity_status"] == "published"
-    ]
+async def get_feed(request: Request, activity_id: int | None = None, next: bool = False, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(NetworkActivity).where(NetworkActivity.status == ActivityStatus.PUBLISHED)
+    )
+    published = result.scalars().all()
+
+    if not published:
+        return templates.TemplateResponse(
+            request=request,
+            name="feed.html",
+            context={
+                "activity": None,
+                "likes_count": 0,
+                "next_activity_id": None
+            }
+        )
 
     current_index = 0
     if activity_id is not None:
         for i, a in enumerate(published):
-            if a["activity_id"] == activity_id:
+            if a.id == activity_id:
                 current_index = i
                 break
 
@@ -26,9 +43,12 @@ def get_feed(request: Request, activity_id: int | None = None, next: bool = Fals
     active_activity = published[current_index]
 
     next_index = (current_index + 1) % len(published)
-    next_activity_id = published[next_index]["activity_id"]
+    next_activity_id = published[next_index].id
 
-    likes_count = len(active_activity["liked_user_ids"])
+    likes_result = await db.execute(
+        select(Like).where(Like.activity_id == active_activity.id)
+    )
+    likes_count = len(likes_result.scalars().all())
 
     return templates.TemplateResponse(
         request=request,
@@ -42,12 +62,11 @@ def get_feed(request: Request, activity_id: int | None = None, next: bool = Fals
 
 
 @router.get("/network-activities/draft")
-def get_draft(request: Request):
-    draft_activity = None
-    for a in network_activities_db:
-        if a["activity_status"] == "draft":
-            draft_activity = a
-            break
+async def get_draft(request: Request, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(NetworkActivity).where(NetworkActivity.status == ActivityStatus.DRAFT)
+    )
+    draft_activity = result.scalar_one_or_none()
 
     return templates.TemplateResponse(
         request=request,
@@ -58,16 +77,76 @@ def get_draft(request: Request):
     )
 
 
-@router.get("/network-activities/catalog")
-def get_catalog(request: Request, filter_traffic: int | None = None):
-    filtered_activities = []
+@router.post("/network-activities/create")
+async def create_activity(
+    activity_title: str = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    new_activity = NetworkActivity(
+        activity_title=activity_title,
+        activity_description="",
+        average_traffic_mbps=0,
+        max_latency_ms=0,
+        preview_image_url="http://localhost:9000/media/telek.png",
+        preview_video_url="http://localhost:9000/media/telek.mp4",
+        status=ActivityStatus.DRAFT
+    )
+    db.add(new_activity)
+    await db.commit()
+    return RedirectResponse(url="/network-activities/draft", status_code=303)
 
-    for a in network_activities_db:
-        if a["activity_status"] == "published":
-            if filter_traffic is None or a["average_traffic_mbps"] <= filter_traffic:
-                activity_copy = a.copy()
-                activity_copy["likes_count"] = len(a["liked_user_ids"])
-                filtered_activities.append(activity_copy)
+
+@router.post("/network-activities/publish")
+async def publish_activity(
+    activity_id: int = Form(...),
+    activity_description: str = Form(...),
+    average_traffic_mbps: int = Form(...),
+    max_latency_ms: int = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(NetworkActivity).where(NetworkActivity.id == activity_id)
+    )
+    activity = result.scalar_one_or_none()
+    
+    if activity:
+        activity.activity_description = activity_description
+        activity.average_traffic_mbps = average_traffic_mbps
+        activity.max_latency_ms = max_latency_ms
+        activity.status = ActivityStatus.PUBLISHED
+        await db.commit()
+
+    return RedirectResponse(url="/network-activities/catalog", status_code=303)
+
+
+@router.get("/network-activities/catalog")
+async def get_catalog(request: Request, filter_traffic: int | None = None, db: AsyncSession = Depends(get_db)):
+    stmt = select(NetworkActivity).where(NetworkActivity.status == ActivityStatus.PUBLISHED)
+
+    if filter_traffic is not None:
+        stmt = stmt.where(NetworkActivity.average_traffic_mbps <= filter_traffic)
+
+    result = await db.execute(stmt)
+    activities = result.scalars().all()
+
+    filtered_activities = []
+    for a in activities:
+        likes_result = await db.execute(
+            select(Like).where(Like.activity_id == a.id)
+        )
+        likes_count = len(likes_result.scalars().all())
+
+        activity_copy = {
+            "activity_id": a.id,
+            "activity_title": a.activity_title,
+            "activity_description": a.activity_description,
+            "average_traffic_mbps": a.average_traffic_mbps,
+            "max_latency_ms": a.max_latency_ms,
+            "preview_image_url": a.preview_image_url or "http://localhost:9000/media/telek.png",
+            "preview_video_url": a.preview_video_url or "http://localhost:9000/media/telek.mp4",
+            "likes_count": likes_count
+        }
+        filtered_activities.append(activity_copy)
 
     return templates.TemplateResponse(
         request=request,
@@ -77,3 +156,16 @@ def get_catalog(request: Request, filter_traffic: int | None = None):
             "filter_traffic": filter_traffic if filter_traffic is not None else ""
         }
     )
+
+
+@router.post("/network-activities/{activity_id}/delete")
+async def delete_activity(activity_id: int, db: AsyncSession = Depends(get_db)):
+    update_query = """
+        UPDATE network_activities 
+        SET status = 'DELETED' 
+        WHERE id = :id
+    """
+    await db.execute(text(update_query), {"id": activity_id})
+    await db.commit()
+    
+    return RedirectResponse(url="/network-activities/catalog", status_code=303)
