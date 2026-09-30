@@ -18,17 +18,30 @@ templates.env.globals["settings"] = settings
 async def get_feed(
     request: Request,
     activity_id: int | None = None,
-    page: int | None = None,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(
-        select(NetworkActivity)
-        .where(NetworkActivity.status == ActivityStatus.PUBLISHED)
-        .order_by(NetworkActivity.id)
-    )
-    published = result.scalars().all()
+    active_activity = None
+    if activity_id is not None:
+        result = await db.execute(
+            select(NetworkActivity)
+            .where(
+                NetworkActivity.id == activity_id,
+                NetworkActivity.status == ActivityStatus.PUBLISHED,
+            )
+            .limit(1)
+        )
+        active_activity = result.scalar_one_or_none()
 
-    if not published:
+    if active_activity is None:
+        result = await db.execute(
+            select(NetworkActivity)
+            .where(NetworkActivity.status == ActivityStatus.PUBLISHED)
+            .order_by(NetworkActivity.id.asc())
+            .limit(1)
+        )
+        active_activity = result.scalar_one_or_none()
+
+    if not active_activity:
         return templates.TemplateResponse(
             request=request,
             name="network_activities/feed.html",
@@ -39,24 +52,25 @@ async def get_feed(
             },
         )
 
-    total = len(published)
+    next_result = await db.execute(
+        select(NetworkActivity.id)
+        .where(
+            NetworkActivity.id > active_activity.id,
+            NetworkActivity.status == ActivityStatus.PUBLISHED,
+        )
+        .order_by(NetworkActivity.id.asc())
+        .limit(1)
+    )
+    next_activity_id = next_result.scalar_one_or_none()
 
-    current_index = 0
-
-    if activity_id is not None:
-        for i, a in enumerate(published):
-            if a.id == activity_id:
-                current_index = i
-                break
-        else:
-            current_index = 0
-    elif page is not None and 0 <= page < total:
-        current_index = page
-
-    active_activity = published[current_index]
-
-    next_index = (current_index + 1) % total
-    next_activity_id = published[next_index].id
+    if next_activity_id is None:
+        wrap_result = await db.execute(
+            select(NetworkActivity.id)
+            .where(NetworkActivity.status == ActivityStatus.PUBLISHED)
+            .order_by(NetworkActivity.id.asc())
+            .limit(1)
+        )
+        next_activity_id = wrap_result.scalar_one_or_none()
 
     likes_result = await db.execute(
         select(func.count(Like.id)).where(
@@ -70,7 +84,7 @@ async def get_feed(
         context={
             "activity": active_activity,
             "likes_count": likes_count,
-            "next_activity_id": next_activity_id if total > 1 else None,
+            "next_activity_id": next_activity_id,
         },
     )
 
