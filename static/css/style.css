@@ -747,16 +747,15 @@ body::-webkit-scrollbar {
     width: 100%;
     padding: 14px;
     background-color: transparent;
-    border: 2px solid #FF4B72;
-    color: #FF4B72;
+    border: 2px solid #00F3BB;
+    color: #fff;
     border-radius: 10px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s;
 }
 
 .btn-delete-outline:hover {
-    background-color: #FF4B72;
-    color: #fff;
+    background-color: #333333;
 }
