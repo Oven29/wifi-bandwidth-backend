@@ -8,6 +8,7 @@ from src.core.config import settings
 from src.db.session import get_db
 from src.models.network_activity import NetworkActivity, ActivityStatus
 from src.models.like import Like
+from src.models.user import User
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
