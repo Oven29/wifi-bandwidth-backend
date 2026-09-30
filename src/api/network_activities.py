@@ -31,7 +31,7 @@ async def get_feed(
     if not published:
         return templates.TemplateResponse(
             request=request,
-            name="feed.html",
+            name="network_activities/feed.html",
             context={
                 "activity": None,
                 "likes_count": 0,
@@ -66,7 +66,7 @@ async def get_feed(
 
     return templates.TemplateResponse(
         request=request,
-        name="feed.html",
+        name="network_activities/feed.html",
         context={
             "activity": active_activity,
             "likes_count": likes_count,
@@ -85,7 +85,7 @@ async def get_draft(request: Request, db: AsyncSession = Depends(get_db)):
 
     return templates.TemplateResponse(
         request=request,
-        name="draft.html",
+        name="network_activities/draft.html",
         context={
             "activity": draft_activity
         }
@@ -175,7 +175,7 @@ async def get_catalog(
 
     return templates.TemplateResponse(
         request=request,
-        name="catalog.html",
+        name="network_activities/catalog.html",
         context={
             "activities": filtered_activities,
             "search": search,
