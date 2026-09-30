@@ -20,13 +20,13 @@
             <label class="input-label">Предпросмотр медиа</label>
             <div class="media-preview-container">
                 <video class="media-preview-item" autoplay loop muted playsinline
-                    poster="http://localhost:9000/media/telek.png">
-                    <source src="{{ activity.preview_video_url or 'http://localhost:9000/media/telek.mp4' }}"
+                    poster="{{ settings.DEFAULT_IMAGE_URL }}">
+                    <source src="{{ activity.preview_video_url or settings.DEFAULT_VIDEO_URL }}"
                         type="video/mp4">
                 </video>
                 <img class="media-preview-item"
-                    src="{{ activity.preview_image_url or 'http://localhost:9000/media/telek.png' }}" alt="Preview"
-                    onerror="this.src='http://localhost:9000/media/telek.png'">
+                    src="{{ activity.preview_image_url or settings.DEFAULT_IMAGE_URL }}" alt="Preview"
+                    onerror="this.src='{{ settings.DEFAULT_IMAGE_URL }}'">
             </div>
 
             <form action="/network-activities/publish" method="POST" class="draft-form">
@@ -56,9 +56,9 @@
             <label class="input-label">Предпросмотр (по умолчанию)</label>
             <div class="media-preview-container">
                 <video class="media-preview-item" autoplay loop muted playsinline>
-                    <source src="http://localhost:9000/media/telek.mp4" type="video/mp4">
+                    <source src="{{ settings.DEFAULT_VIDEO_URL }}" type="video/mp4">
                 </video>
-                <img class="media-preview-item" src="http://localhost:9000/media/telek.png" alt="Preview">
+                <img class="media-preview-item" src="{{ settings.DEFAULT_IMAGE_URL }}" alt="Preview">
             </div>
 
             <form action="/network-activities/create" method="POST" class="draft-form">

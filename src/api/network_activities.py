@@ -4,12 +4,14 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select, text
 
+from src.core.config import settings
 from src.db.session import get_db
 from src.models.network_activity import NetworkActivity, ActivityStatus
 from src.models.like import Like
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+templates.env.globals["settings"] = settings
 
 
 @router.get("/network-activities/feed")
@@ -100,8 +102,8 @@ async def create_activity(
         activity_description="",
         average_traffic_mbps=0,
         max_latency_ms=0,
-        preview_image_url="http://localhost:9000/media/telek.png",
-        preview_video_url="http://localhost:9000/media/telek.mp4",
+        preview_image_url=settings.DEFAULT_IMAGE_URL,
+        preview_video_url=settings.DEFAULT_VIDEO_URL,
         status=ActivityStatus.DRAFT
     )
     db.add(new_activity)
@@ -165,8 +167,8 @@ async def get_catalog(
             "activity_description": a.activity_description,
             "average_traffic_mbps": a.average_traffic_mbps,
             "max_latency_ms": a.max_latency_ms,
-            "preview_image_url": a.preview_image_url or "http://localhost:9000/media/telek.png",
-            "preview_video_url": a.preview_video_url or "http://localhost:9000/media/telek.mp4",
+            "preview_image_url": a.preview_image_url or settings.DEFAULT_IMAGE_URL,
+            "preview_video_url": a.preview_video_url or settings.DEFAULT_VIDEO_URL,
             "likes_count": likes_count
         }
         filtered_activities.append(activity_copy)
