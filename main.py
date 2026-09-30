@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
-from src.api.handlers import router
+from src.api.network_activities import router
 
 
 app = FastAPI(title="Bandwidth Router Calc")
