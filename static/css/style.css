@@ -619,19 +619,18 @@ body::-webkit-scrollbar {
 
 .media-preview-container {
     display: flex;
+    flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
 }
 
 .media-preview-item {
-    flex: 1;
     border-radius: 8px;
-    height: 120px;
+    height: 140px;
     object-fit: cover;
     background-color: var(--card-surface);
     border: 1px solid var(--border-subtle);
     width: 100%;
-    /* Чтобы видео не плющило */
 }
 
 .draft-text-box {

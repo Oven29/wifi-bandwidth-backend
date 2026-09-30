@@ -19,14 +19,14 @@
             {% if activity %}
             <label class="input-label">Предпросмотр медиа</label>
             <div class="media-preview-container">
+                <img class="media-preview-item"
+                    src="{{ activity.preview_image_url or settings.DEFAULT_IMAGE_URL }}" alt="Preview"
+                    onerror="this.src='{{ settings.DEFAULT_IMAGE_URL }}'">
                 <video class="media-preview-item" autoplay loop muted playsinline
                     poster="{{ settings.DEFAULT_IMAGE_URL }}">
                     <source src="{{ activity.preview_video_url or settings.DEFAULT_VIDEO_URL }}"
                         type="video/mp4">
                 </video>
-                <img class="media-preview-item"
-                    src="{{ activity.preview_image_url or settings.DEFAULT_IMAGE_URL }}" alt="Preview"
-                    onerror="this.src='{{ settings.DEFAULT_IMAGE_URL }}'">
             </div>
 
             <form action="/network-activities/publish" method="POST" class="draft-form">
@@ -55,15 +55,21 @@
             {% else %}
             <label class="input-label">Предпросмотр (по умолчанию)</label>
             <div class="media-preview-container">
+                <img class="media-preview-item" src="{{ settings.DEFAULT_IMAGE_URL }}" alt="Preview">
                 <video class="media-preview-item" autoplay loop muted playsinline>
                     <source src="{{ settings.DEFAULT_VIDEO_URL }}" type="video/mp4">
                 </video>
-                <img class="media-preview-item" src="{{ settings.DEFAULT_IMAGE_URL }}" alt="Preview">
             </div>
 
             <form action="/network-activities/create" method="POST" class="draft-form">
                 <label class="input-label">Название профиля</label>
                 <input type="text" name="activity_title" class="draft-input" placeholder="Новая активность" required>
+
+                <label class="input-label">URL изображения (необязательно)</label>
+                <input type="text" name="preview_image_url" class="draft-input" placeholder="{{ settings.DEFAULT_IMAGE_URL }}">
+
+                <label class="input-label">URL видео (необязательно)</label>
+                <input type="text" name="preview_video_url" class="draft-input" placeholder="{{ settings.DEFAULT_VIDEO_URL }}">
 
                 <button type="submit" class="btn-save-outline">Далее</button>
             </form>

@@ -109,6 +109,8 @@ async def get_draft(request: Request, db: AsyncSession = Depends(get_db)):
 @router.post("/network-activities/create")
 async def create_activity(
     activity_title: str = Form(...),
+    preview_image_url: str | None = Form(None),
+    preview_video_url: str | None = Form(None),
     db: AsyncSession = Depends(get_db)
 ):
     new_activity = NetworkActivity(
@@ -116,8 +118,8 @@ async def create_activity(
         activity_description="",
         average_traffic_mbps=0,
         max_latency_ms=0,
-        preview_image_url=settings.DEFAULT_IMAGE_URL,
-        preview_video_url=settings.DEFAULT_VIDEO_URL,
+        preview_image_url=preview_image_url.strip() if preview_image_url and preview_image_url.strip() else settings.DEFAULT_IMAGE_URL,
+        preview_video_url=preview_video_url.strip() if preview_video_url and preview_video_url.strip() else settings.DEFAULT_VIDEO_URL,
         status=ActivityStatus.DRAFT
     )
     db.add(new_activity)
