@@ -8,7 +8,11 @@ from src.db.session import get_db
 from src.models.like import Like
 from src.models.network_activity import ActivityStatus, NetworkActivity
 from src.models.user import User
-from src.schemas.network_activity import NetworkActivityPublish, NetworkActivityResponse
+from src.schemas.network_activity import (
+    FeedResponse,
+    NetworkActivityPublish,
+    NetworkActivityResponse,
+)
 
 router = APIRouter(prefix="/api/network-activities", tags=["Network Activities"])
 
@@ -39,7 +43,7 @@ async def list_activities(
     return response
 
 
-@router.get("/feed")
+@router.get("/feed", response_model=FeedResponse)
 async def get_feed(
     activity_id: int | None = None,
     db: AsyncSession = Depends(get_db),
@@ -93,8 +97,17 @@ async def get_feed(
         )
         next_activity_id = wrap_result.scalar_one_or_none()
 
+    like_result = await db.execute(
+        select(Like).where(
+            Like.activity_id == active_activity.id,
+            Like.user_id == current_user_id,
+        )
+    )
+    existing_like = like_result.scalar_one_or_none()
+
     activity_resp = NetworkActivityResponse.model_validate(active_activity)
     activity_resp.is_owner = 1 if active_activity.creator_id == current_user_id else 0
+    activity_resp.is_liked = 1 if existing_like else 0
 
     return {
         "activity": activity_resp,

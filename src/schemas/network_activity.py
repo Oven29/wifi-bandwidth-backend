@@ -16,8 +16,15 @@ class NetworkActivityResponse(BaseModel):
     created_at: datetime | None = None
     updated_at: datetime | None = None
     is_owner: int = 0
+    is_liked: int = 0
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class FeedResponse(BaseModel):
+    activity: NetworkActivityResponse | None = None
+    next_id: int | None = None
+    next_activity_id: int | None = None
 
 
 class NetworkActivityPublish(BaseModel):

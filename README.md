@@ -14,7 +14,7 @@
 | Метод | Эндпоинт | Описание | Тело запроса / Параметры | Ответ |
 | :--- | :--- | :--- | :--- | :--- |
 | `GET` | `/api/network-activities` | Получение списка опубликованных активностей (опциональная фильтрация по максимальному трафику) | Query: `filter_traffic: int` (опционально) | `200 OK`: `List[NetworkActivityResponse]` (`is_owner` равен 1, если создано текущим пользователем, иначе 0) |
-| `GET` | `/api/network-activities/feed` | Получение ленты опубликованных активностей с циклической пагинацией | Query: `activity_id: int` (опционально) | `200 OK`: `{"activity": NetworkActivityResponse, "next_id": int, "next_activity_id": int}` |
+| `GET` | `/api/network-activities/feed` | Получение ленты опубликованных активностей с циклической пагинацией | Query: `activity_id: int` (опционально) | `200 OK`: `{"activity": NetworkActivityResponse, "next_id": int, "next_activity_id": int}` (`is_owner` и `is_liked` равны 1 или 0) |
 | `GET` | `/api/network-activities/draft` | Получение текущего черновика текущего пользователя (максимум 1 запись) | Нет | `200 OK`: `NetworkActivityResponse` или `null` |
 | `POST` | `/api/network-activities` | Создание нового черновика с загрузкой медиафайлов через MinIO | Form: `activity_title: str`, Files: `pic: UploadFile`, `video: UploadFile` | `201 Created`: `NetworkActivityResponse` |
 | `PUT` | `/api/network-activities/{id}/publish` | Публикация существующего черновика текущего пользователя | JSON: `NetworkActivityPublish` (`description`, `average_traffic_mbps`, `max_latency_ms`) | `200 OK`: `NetworkActivityResponse` (статус меняется на `PUBLISHED`) |
