@@ -119,8 +119,8 @@ async def create_activity(
         activity_description="",
         average_traffic_mbps=0,
         max_latency_ms=0,
-        preview_image_url=preview_image_url.strip() if preview_image_url and preview_image_url.strip() else settings.DEFAULT_IMAGE_URL,
-        preview_video_url=preview_video_url.strip() if preview_video_url and preview_video_url.strip() else settings.DEFAULT_VIDEO_URL,
+        preview_image_url=preview_image_url.strip() if preview_image_url and preview_image_url.strip() else "/static/img/default.png",
+        preview_video_url=preview_video_url.strip() if preview_video_url and preview_video_url.strip() else "/static/img/default.mp4",
         status=ActivityStatus.DRAFT
     )
     db.add(new_activity)
@@ -184,8 +184,8 @@ async def get_catalog(
             "activity_description": a.activity_description,
             "average_traffic_mbps": a.average_traffic_mbps,
             "max_latency_ms": a.max_latency_ms,
-            "preview_image_url": a.preview_image_url or settings.DEFAULT_IMAGE_URL,
-            "preview_video_url": a.preview_video_url or settings.DEFAULT_VIDEO_URL,
+            "preview_image_url": a.preview_image_url or "/static/img/default.png",
+            "preview_video_url": a.preview_video_url or "/static/img/default.mp4",
             "likes_count": likes_count
         }
         filtered_activities.append(activity_copy)

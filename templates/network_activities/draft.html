@@ -20,11 +20,11 @@
             <label class="input-label">Предпросмотр медиа</label>
             <div class="media-preview-container">
                 <img class="media-preview-item"
-                    src="{{ activity.preview_image_url or settings.DEFAULT_IMAGE_URL }}" alt="Preview"
-                    onerror="this.src='{{ settings.DEFAULT_IMAGE_URL }}'">
+                    src="{{ activity.preview_image_url or '/static/img/default.png' }}" alt="Preview"
+                    onerror="this.src='/static/img/default.png'">
                 <video class="media-preview-item" autoplay loop muted playsinline
-                    poster="{{ settings.DEFAULT_IMAGE_URL }}">
-                    <source src="{{ activity.preview_video_url or settings.DEFAULT_VIDEO_URL }}"
+                    poster="/static/img/default.png">
+                    <source src="{{ activity.preview_video_url or '/static/img/default.mp4' }}"
                         type="video/mp4">
                 </video>
             </div>
@@ -55,9 +55,9 @@
             {% else %}
             <label class="input-label">Предпросмотр (по умолчанию)</label>
             <div class="media-preview-container">
-                <img class="media-preview-item" src="{{ settings.DEFAULT_IMAGE_URL }}" alt="Preview">
+                <img class="media-preview-item" src="/static/img/default.png" alt="Preview">
                 <video class="media-preview-item" autoplay loop muted playsinline>
-                    <source src="{{ settings.DEFAULT_VIDEO_URL }}" type="video/mp4">
+                    <source src="/static/img/default.mp4" type="video/mp4">
                 </video>
             </div>
 
@@ -65,11 +65,14 @@
                 <label class="input-label">Название профиля</label>
                 <input type="text" name="activity_title" class="draft-input" placeholder="Новая активность" required>
 
-                <label class="input-label">URL изображения (необязательно)</label>
-                <input type="text" name="preview_image_url" class="draft-input" placeholder="{{ settings.DEFAULT_IMAGE_URL }}">
+                <label class="input-label">Фото профиля</label>
+                <button type="button" onclick="document.getElementById('photoInput').click()" class="btn-save-outline">Загрузить фото</button>
+                <input type="file" id="photoInput" style="display: none;">
 
-                <label class="input-label">URL видео (необязательно)</label>
-                <input type="text" name="preview_video_url" class="draft-input" placeholder="{{ settings.DEFAULT_VIDEO_URL }}">
+                <label class="input-label">Видео профиля</label>
+                <button type="button" onclick="document.getElementById('videoInput').click()" class="btn-save-outline">Загрузить видео</button>
+                <input type="file" id="videoInput" style="display: none;">
+
 
                 <button type="submit" class="btn-save-outline">Далее</button>
             </form>
