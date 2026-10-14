@@ -1,0 +1,304 @@
+{
+	"info": {
+		"name": "Lab 3-4 - Network Activities & Auth",
+		"description": "Коллекция REST API методов с поддержкой авторизации через Cookies и Redis-сессии",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Домен услуги (Network Activities)",
+			"item": [
+				{
+					"name": "1. GET Список услуг (с фильтром)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/?filter_traffic=100",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", ""],
+							"query": [
+								{
+									"key": "filter_traffic",
+									"value": "100"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "2. GET Лента",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/feed",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", "feed"],
+							"query": [
+								{
+									"key": "activity_id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "3. GET Получение черновика",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/draft",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", "draft"]
+						}
+					}
+				},
+				{
+					"name": "4. POST Добавление услуги (Черновик + Файлы)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "activity_title",
+									"value": "Новая услуга",
+									"type": "text"
+								},
+								{
+									"key": "pic",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "video",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", ""]
+						}
+					}
+				},
+				{
+					"name": "5. PUT Публикация услуги",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"activity_description\": \"Описание нашей новой активности после публикации\",\n    \"average_traffic_mbps\": 45,\n    \"max_latency_ms\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/1/publish",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", "1", "publish"]
+						}
+					}
+				},
+				{
+					"name": "6. DELETE Удаление услуги",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", "1"]
+						}
+					}
+				},
+				{
+					"name": "7. POST Поставить / Убрать лайк",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/network-activities/1/like",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "network-activities", "1", "like"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Домен пользователь (Users)",
+			"item": [
+				{
+					"name": "8. POST Регистрация",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"ivan_test\",\n    \"password\": \"secret_password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/register",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "users", "register"]
+						}
+					}
+				},
+				{
+					"name": "9. POST Аутентификация",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.session_id) {",
+									"    pm.collectionVariables.set(\"session_id\", jsonData.session_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "ivan_test",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "secret_password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/users/auth",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "users", "auth"]
+						}
+					}
+				},
+				{
+					"name": "10. POST Деавторизация",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "session_id={{session_id}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/users/logout",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "users", "logout"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "session_id",
+			"value": ""
+		}
+	]
+}
