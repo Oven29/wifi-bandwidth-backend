@@ -30,6 +30,8 @@ class MinioSettings(BaseSettings):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    REDIS_URL: str = "redis://localhost:6379/0"
+
     db: DBSettings = Field(default_factory=DBSettings)
     minio: MinioSettings = Field(default_factory=MinioSettings)
 
