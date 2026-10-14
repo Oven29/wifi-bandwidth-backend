@@ -2,6 +2,7 @@ services:
   minio:
     container_name: minio_storage
     image: minio/minio:latest
+    restart: unless-stopped
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -16,6 +17,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: postgres_db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: qwerty
@@ -28,12 +30,16 @@ services:
   redis:
     image: redis:alpine
     container_name: redis_cache
+    restart: unless-stopped
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
 
   adminer:
     image: adminer:latest
     container_name: adminer_ui
+    restart: unless-stopped
     ports:
       - "8081:8080"
     depends_on:
@@ -42,3 +48,4 @@ services:
 volumes:
   minio-data:
   postgres_data:
+  redis-data:
