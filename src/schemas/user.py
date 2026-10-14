@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict
 
 class UserAuthRequest(BaseModel):
     username: str
-    password: str | None = None
+    password: str
 
 
 class UserResponse(BaseModel):
