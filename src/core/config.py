@@ -1,19 +1,37 @@
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class DBSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="DB_", env_file=".env", extra="ignore")
+
+    host: str
+    port: int
+    user: str
+    password: str
+    name: str
+
+    @property
+    def url(self) -> str:
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+
+
+class MinioSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="MINIO_", env_file=".env", extra="ignore")
+
+    endpoint: str
+    access_key: str
+    secret_key: str
+    bucket_name: str
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_NAME: str
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    @property
-    def DATABASE_URL(self) -> str:
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-
-    class Config:
-        env_file = ".env"
+    db: DBSettings = Field(default_factory=DBSettings)
+    minio: MinioSettings = Field(default_factory=MinioSettings)
 
 
 settings = Settings()
