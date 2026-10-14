@@ -2,7 +2,10 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, s
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.dependencies import get_current_user
+from src.api.dependencies import (
+    get_current_authenticated_user,
+    get_current_user,
+)
 from src.core.minio_client import upload_file_to_minio
 from src.db.session import get_db
 from src.models.like import Like
@@ -22,7 +25,7 @@ router = APIRouter(prefix="/api/network-activities", tags=["Network Activities"]
 async def list_activities(
     filter_traffic: int | None = None,
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int | None = Depends(get_current_user),
 ):
     stmt = (
         select(NetworkActivity)
@@ -38,7 +41,9 @@ async def list_activities(
     response = []
     for act in activities:
         item = NetworkActivityResponse.model_validate(act)
-        item.is_owner = 1 if act.creator_id == current_user_id else 0
+        item.is_owner = (
+            1 if current_user_id is not None and act.creator_id == current_user_id else 0
+        )
         response.append(item)
     return response
 
@@ -47,7 +52,7 @@ async def list_activities(
 async def get_feed(
     activity_id: int | None = None,
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int | None = Depends(get_current_user),
 ):
     active_activity = None
     if activity_id is not None:
@@ -97,16 +102,20 @@ async def get_feed(
         )
         next_activity_id = wrap_result.scalar_one_or_none()
 
-    like_result = await db.execute(
-        select(Like).where(
-            Like.activity_id == active_activity.id,
-            Like.user_id == current_user_id,
+    existing_like = None
+    if current_user_id is not None:
+        like_result = await db.execute(
+            select(Like).where(
+                Like.activity_id == active_activity.id,
+                Like.user_id == current_user_id,
+            )
         )
-    )
-    existing_like = like_result.scalar_one_or_none()
+        existing_like = like_result.scalar_one_or_none()
 
     activity_resp = NetworkActivityResponse.model_validate(active_activity)
-    activity_resp.is_owner = 1 if active_activity.creator_id == current_user_id else 0
+    activity_resp.is_owner = (
+        1 if current_user_id is not None and active_activity.creator_id == current_user_id else 0
+    )
     activity_resp.is_liked = 1 if existing_like else 0
 
     return {
@@ -119,7 +128,7 @@ async def get_feed(
 @router.get("/draft", response_model=NetworkActivityResponse | None)
 async def get_draft(
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_authenticated_user),
 ):
     result = await db.execute(
         select(NetworkActivity)
@@ -146,7 +155,7 @@ async def create_draft(
     pic: UploadFile = File(...),
     video: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_authenticated_user),
 ):
     image_url = upload_file_to_minio(pic)
     video_url = upload_file_to_minio(video)
@@ -175,7 +184,7 @@ async def publish_activity(
     id: int,
     data: NetworkActivityPublish,
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_authenticated_user),
 ):
     result = await db.execute(
         select(NetworkActivity).where(NetworkActivity.id == id)
@@ -216,7 +225,7 @@ async def publish_activity(
 async def delete_activity(
     id: int,
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_authenticated_user),
 ):
     result = await db.execute(
         select(NetworkActivity).where(NetworkActivity.id == id)
@@ -243,7 +252,7 @@ async def delete_activity(
 async def toggle_like(
     id: int,
     db: AsyncSession = Depends(get_db),
-    current_user_id: int = Depends(get_current_user),
+    current_user_id: int = Depends(get_current_authenticated_user),
 ):
     act_result = await db.execute(
         select(NetworkActivity).where(NetworkActivity.id == id)
