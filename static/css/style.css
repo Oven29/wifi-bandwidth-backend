@@ -759,3 +759,134 @@ body::-webkit-scrollbar {
 .btn-delete-outline:hover {
     background-color: #333333;
 }
+
+
+/* --- ЛР-2: Стили управления активностью (черновик, фото и видео рядом с выбором) --- */
+.media-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.media-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Строка медиа: превью и выбор файла рядом */
+.media-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    background-color: var(--card-surface);
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+}
+
+.media-preview-box {
+    width: 90px;
+    height: 72px;
+    min-width: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.media-preview-img,
+.media-preview-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.media-control-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.btn-file-picker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background-color: rgba(0, 243, 187, 0.08);
+    border: 1.5px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.btn-file-picker:hover {
+    background-color: rgba(0, 243, 187, 0.18);
+}
+
+.file-native-input {
+    display: none;
+}
+
+.file-name-caption {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 2px;
+}
+
+.media-info-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.media-badge {
+    color: var(--accent-cyan);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.media-subtext {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.btn-discard {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 75, 114, 0.4);
+    color: #ff4b72;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-discard:hover {
+    background: rgba(255, 75, 114, 0.12);
+}
+
+.form-fields-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}

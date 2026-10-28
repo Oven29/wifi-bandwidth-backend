@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, Form
+from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -45,7 +45,7 @@ async def get_feed(
     if not active_activity:
         return templates.TemplateResponse(
             request=request,
-            name="network_activities/feed.html",
+            name="network_activities_feed.html",
             context={
                 "activity": None,
                 "likes_count": 0,
@@ -81,7 +81,7 @@ async def get_feed(
 
     return templates.TemplateResponse(
         request=request,
-        name="network_activities/feed.html",
+        name="network_activities_feed.html",
         context={
             "activity": active_activity,
             "likes_count": likes_count,
@@ -100,7 +100,7 @@ async def get_draft(request: Request, db: AsyncSession = Depends(get_db)):
 
     return templates.TemplateResponse(
         request=request,
-        name="network_activities/draft.html",
+        name="network_activities_draft.html",
         context={
             "activity": draft_activity
         }
@@ -110,17 +110,18 @@ async def get_draft(request: Request, db: AsyncSession = Depends(get_db)):
 @router.post("/network-activities/create")
 async def create_activity(
     activity_title: str = Form(...),
-    preview_image_url: str | None = Form(None),
-    preview_video_url: str | None = Form(None),
+    pic: UploadFile | None = File(None),
+    video: UploadFile | None = File(None),
     db: AsyncSession = Depends(get_db)
 ):
+    # Условное сохранение / заглушка медиа для шаблонов без реальной загрузки
     new_activity = NetworkActivity(
         activity_title=activity_title,
         activity_description="",
         average_traffic_mbps=0,
         max_latency_ms=0,
-        preview_image_url=preview_image_url.strip() if preview_image_url and preview_image_url.strip() else "/static/img/default.png",
-        preview_video_url=preview_video_url.strip() if preview_video_url and preview_video_url.strip() else "/static/img/default.mp4",
+        preview_image_url="/static/img/default.png",
+        preview_video_url="/static/img/default.mp4",
         status=ActivityStatus.DRAFT
     )
     db.add(new_activity)
@@ -192,7 +193,7 @@ async def get_catalog(
 
     return templates.TemplateResponse(
         request=request,
-        name="network_activities/catalog.html",
+        name="network_activities_catalog.html",
         context={
             "activities": filtered_activities,
             "search": search,
@@ -202,7 +203,11 @@ async def get_catalog(
 
 
 @router.post("/network-activities/{activity_id}/delete")
-async def delete_activity(activity_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_activity(
+    activity_id: int, 
+    redirect_to: str | None = Form(None),
+    db: AsyncSession = Depends(get_db)
+):
     update_query = """
         UPDATE network_activities 
         SET status = 'DELETED' 
@@ -211,4 +216,6 @@ async def delete_activity(activity_id: int, db: AsyncSession = Depends(get_db)):
     await db.execute(text(update_query), {"id": activity_id})
     await db.commit()
 
+    if redirect_to:
+        return RedirectResponse(url=redirect_to, status_code=303)
     return RedirectResponse(url="/network-activities/catalog", status_code=303)

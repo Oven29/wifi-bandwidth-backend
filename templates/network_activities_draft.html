@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавление</title>
+    <title>Добавление активности</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
@@ -17,18 +17,43 @@
         <div class="page-content draft-page-content">
 
             {% if activity %}
-            <label class="input-label">Предпросмотр медиа</label>
-            <div class="media-preview-container">
-                <img class="media-preview-item"
-                    src="{{ activity.preview_image_url or '/static/img/default.png' }}" alt="Preview"
-                    onerror="this.src='/static/img/default.png'">
-                <video class="media-preview-item" autoplay loop muted playsinline
-                    poster="/static/img/default.png">
-                    <source src="{{ activity.preview_video_url or '/static/img/default.mp4' }}"
-                        type="video/mp4">
-                </video>
+            <!-- СТАТУС 2: Черновик создан (после Далее). Только публикация, выбор файлов отключен -->
+            <div class="media-section">
+                <!-- Блок Фото (друг под другом, без выбора) -->
+                <div class="media-block">
+                    <label class="input-label">Фото профиля</label>
+                    <div class="media-row">
+                        <div class="media-preview-box">
+                            <img class="media-preview-img"
+                                src="{{ activity.preview_image_url or '/static/img/default.png' }}" 
+                                alt="Фото профиля"
+                                onerror="this.src='/static/img/default.png'">
+                        </div>
+                        <div class="media-info-box">
+                            <span class="media-badge">✓ Фото сохранено</span>
+                            <span class="media-subtext">Выбрано на шаге 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок Видео (друг под другом, без выбора) -->
+                <div class="media-block">
+                    <label class="input-label">Видео профиля</label>
+                    <div class="media-row">
+                        <div class="media-preview-box">
+                            <video class="media-preview-video" autoplay loop muted playsinline poster="/static/img/default.png">
+                                <source src="{{ activity.preview_video_url or '/static/img/default.mp4' }}" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="media-info-box">
+                            <span class="media-badge">✓ Видео сохранено</span>
+                            <span class="media-subtext">Выбрано на шаге 1</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <!-- Форма публикации: вводятся только требуемые поля для публикации -->
             <form action="/network-activities/publish" method="POST" class="draft-form">
                 <input type="hidden" name="activity_id" value="{{ activity.id }}">
 
@@ -38,41 +63,85 @@
                 </div>
 
                 <label class="input-label">Краткая информация</label>
-                <textarea name="activity_description" class="draft-input" rows="3" placeholder="Введите описание..."
+                <textarea name="activity_description" class="draft-input" rows="3" placeholder="Введите описание активности..."
                     required>{{ activity.activity_description if activity.activity_description != '' else '' }}</textarea>
 
                 <label class="input-label">Средний трафик (Мбит/с)</label>
                 <input type="number" name="average_traffic_mbps" class="draft-input"
-                    value="{{ activity.average_traffic_mbps }}" required>
+                    value="{{ activity.average_traffic_mbps if activity.average_traffic_mbps != 0 else '' }}" 
+                    placeholder="Например: 25" required min="1">
 
                 <label class="input-label">Макс. задержка (мс)</label>
-                <input type="number" name="max_latency_ms" class="draft-input" value="{{ activity.max_latency_ms }}"
-                    required>
+                <input type="number" name="max_latency_ms" class="draft-input" 
+                    value="{{ activity.max_latency_ms if activity.max_latency_ms != 0 else '' }}" 
+                    placeholder="Например: 50" required min="1">
 
                 <button type="submit" class="btn-save-outline">Опубликовать</button>
             </form>
 
+            <form action="/network-activities/{{ activity.id }}/delete" method="POST" class="card-delete-form" style="margin-top: 12px;">
+                <input type="hidden" name="redirect_to" value="/network-activities/draft">
+                <button type="submit" class="btn-discard" onclick="return confirm('Отменить черновик и начать заново?');">
+                    Отменить черновик
+                </button>
+            </form>
+
             {% else %}
-            <label class="input-label">Предпросмотр (по умолчанию)</label>
-            <div class="media-preview-container">
-                <img class="media-preview-item" src="/static/img/default.png" alt="Preview">
-                <video class="media-preview-item" autoplay loop muted playsinline>
-                    <source src="/static/img/default.mp4" type="video/mp4">
-                </video>
-            </div>
+            <!-- СТАТУС 1: Черновика нет. Создание с выбором файлов и картинкой рядом (до Далее) -->
+            <form action="/network-activities/create" method="POST" enctype="multipart/form-data" class="draft-form">
+                
+                <div class="media-section">
+                    <!-- Блок Фото: и выбор и картинка вместе рядом -->
+                    <div class="media-block">
+                        <label class="input-label">Фото профиля</label>
+                        <div class="media-row">
+                            <div class="media-preview-box">
+                                <img id="photoPreview" class="media-preview-img" src="/static/img/default.png" alt="Превью фото">
+                            </div>
+                            <div class="media-control-box">
+                                <label for="photoInput" class="btn-file-picker">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    <span>Выбрать фото</span>
+                                </label>
+                                <input type="file" id="photoInput" name="pic" accept="image/*" class="file-native-input" onchange="previewImage(this)">
+                                <div id="photoFileName" class="file-name-caption">Файл не выбран</div>
+                            </div>
+                        </div>
+                    </div>
 
-            <form action="/network-activities/create" method="POST" class="draft-form">
-                <label class="input-label">Название профиля</label>
-                <input type="text" name="activity_title" class="draft-input" placeholder="Новая активность" required>
+                    <!-- Блок Видео: и выбор и видео вместе рядом -->
+                    <div class="media-block">
+                        <label class="input-label">Видео профиля</label>
+                        <div class="media-row">
+                            <div class="media-preview-box">
+                                <video id="videoPreview" class="media-preview-video" autoplay loop muted playsinline poster="/static/img/default.png">
+                                    <source src="/static/img/default.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="media-control-box">
+                                <label for="videoInput" class="btn-file-picker">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="23 7 16 12 23 17 23 7"/>
+                                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                                    </svg>
+                                    <span>Выбрать видео</span>
+                                </label>
+                                <input type="file" id="videoInput" name="video" accept="video/*" class="file-native-input" onchange="previewVideo(this)">
+                                <div id="videoFileName" class="file-name-caption">Файл не выбран</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <label class="input-label">Фото профиля</label>
-                <button type="button" onclick="document.getElementById('photoInput').click()" class="btn-save-outline">Загрузить фото</button>
-                <input type="file" id="photoInput" style="display: none;">
-
-                <label class="input-label">Видео профиля</label>
-                <button type="button" onclick="document.getElementById('videoInput').click()" class="btn-save-outline">Загрузить видео</button>
-                <input type="file" id="videoInput" style="display: none;">
-
+                <!-- Ввод: ТОЛЬКО то, что нужно вводить на этом шаге (БЕЗ URL!) -->
+                <div class="form-fields-group">
+                    <label class="input-label">Название профиля</label>
+                    <input type="text" name="activity_title" class="draft-input" placeholder="Введите название активности" required>
+                </div>
 
                 <button type="submit" class="btn-save-outline">Далее</button>
             </form>
@@ -81,7 +150,7 @@
         </div>
     </div>
 
-
+    <!-- Навигационная панель -->
     <div class="bottom-bar">
         <a href="/network-activities/feed" class="tab-item">
             <svg width="19" height="12" viewBox="0 0 19 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -107,7 +176,35 @@
             Плитка
         </a>
     </div>
-    </div>
+
+    <!-- Скрипт мгновенного предпросмотра выбранных файлов -->
+    <script>
+        function previewImage(input) {
+            const file = input.files && input.files[0];
+            const nameEl = document.getElementById('photoFileName');
+            const imgEl = document.getElementById('photoPreview');
+            if (file) {
+                nameEl.textContent = file.name;
+                imgEl.src = URL.createObjectURL(file);
+            } else {
+                nameEl.textContent = 'Файл не выбран';
+            }
+        }
+
+        function previewVideo(input) {
+            const file = input.files && input.files[0];
+            const nameEl = document.getElementById('videoFileName');
+            const videoEl = document.getElementById('videoPreview');
+            if (file) {
+                nameEl.textContent = file.name;
+                videoEl.src = URL.createObjectURL(file);
+                videoEl.load();
+                videoEl.play().catch(function() {});
+            } else {
+                nameEl.textContent = 'Файл не выбран';
+            }
+        }
+    </script>
 </body>
 
 </html>
