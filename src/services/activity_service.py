@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,7 +19,7 @@ class ActivityService:
         db: AsyncSession,
         current_user_id: int | None = None,
         filter_traffic: int | None = None,
-    ) -> list[NetworkActivityResponse]:
+    ) -> List[NetworkActivityResponse]:
         """Fetch all published activities, optionally filtered by traffic, calculating ownership."""
         stmt = (
             select(NetworkActivity)

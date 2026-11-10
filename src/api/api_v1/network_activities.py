@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,11 +15,13 @@ from src.schemas.network_activity import (
 )
 from src.services.activity_service import ActivityService
 
-router = APIRouter(prefix="/api/network-activities", tags=["Network Activities"])
+
+router = APIRouter(prefix="/api/network-activities",
+                   tags=["Network Activities"])
 
 
-@router.get("", response_model=list[NetworkActivityResponse])
-@router.get("/", response_model=list[NetworkActivityResponse])
+@router.get("", response_model=List[NetworkActivityResponse])
+@router.get("/", response_model=List[NetworkActivityResponse])
 async def list_activities(
     filter_traffic: int | None = None,
     db: AsyncSession = Depends(get_db),
