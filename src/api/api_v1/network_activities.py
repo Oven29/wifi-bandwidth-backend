@@ -1,20 +1,18 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, File, Form, UploadFile, status
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.dependencies import (
+    get_activity_service,
     get_current_authenticated_user,
     get_current_user,
 )
-from src.db.session import get_db
 from src.schemas.network_activity import (
     FeedResponse,
     NetworkActivityPublish,
     NetworkActivityResponse,
 )
 from src.services.activity_service import ActivityService
-
 
 router = APIRouter(prefix="/api/network-activities",
                    tags=["Network Activities"])
@@ -24,12 +22,11 @@ router = APIRouter(prefix="/api/network-activities",
 @router.get("/", response_model=List[NetworkActivityResponse])
 async def list_activities(
     filter_traffic: int | None = None,
-    db: AsyncSession = Depends(get_db),
     current_user_id: int | None = Depends(get_current_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Retrieve published network activities with optional traffic filtering and ownership flag."""
-    return await ActivityService.get_published_activities(
-        db=db,
+    return await activity_service.get_published_activities(
         current_user_id=current_user_id,
         filter_traffic=filter_traffic,
     )
@@ -38,12 +35,11 @@ async def list_activities(
 @router.get("/feed", response_model=FeedResponse)
 async def get_feed(
     activity_id: int | None = None,
-    db: AsyncSession = Depends(get_db),
     current_user_id: int | None = Depends(get_current_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Retrieve feed item with cyclic next ID, like status, and ownership flag."""
-    return await ActivityService.get_feed(
-        db=db,
+    return await activity_service.get_feed(
         current_user_id=current_user_id,
         activity_id=activity_id,
     )
@@ -51,12 +47,11 @@ async def get_feed(
 
 @router.get("/draft", response_model=NetworkActivityResponse | None)
 async def get_draft(
-    db: AsyncSession = Depends(get_db),
     current_user_id: int = Depends(get_current_authenticated_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Retrieve active draft for the authenticated user."""
-    return await ActivityService.get_user_draft(
-        db=db,
+    return await activity_service.get_user_draft(
         user_id=current_user_id,
     )
 
@@ -67,12 +62,11 @@ async def create_draft(
     activity_title: str = Form(...),
     pic: UploadFile = File(...),
     video: UploadFile = File(...),
-    db: AsyncSession = Depends(get_db),
     current_user_id: int = Depends(get_current_authenticated_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Create a new activity draft with uploaded media files in MinIO."""
-    return await ActivityService.create_draft(
-        db=db,
+    return await activity_service.create_draft(
         user_id=current_user_id,
         activity_title=activity_title,
         pic=pic,
@@ -84,12 +78,11 @@ async def create_draft(
 async def publish_activity(
     id: int,
     data: NetworkActivityPublish,
-    db: AsyncSession = Depends(get_db),
     current_user_id: int = Depends(get_current_authenticated_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Publish a draft network activity owned by authenticated user."""
-    return await ActivityService.publish_activity(
-        db=db,
+    return await activity_service.publish_activity(
         user_id=current_user_id,
         activity_id=id,
         data=data,
@@ -99,12 +92,11 @@ async def publish_activity(
 @router.delete("/{id}")
 async def delete_activity(
     id: int,
-    db: AsyncSession = Depends(get_db),
     current_user_id: int = Depends(get_current_authenticated_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Soft delete an activity owned by authenticated user."""
-    deleted_id = await ActivityService.delete_activity(
-        db=db,
+    deleted_id = await activity_service.delete_activity(
         user_id=current_user_id,
         activity_id=id,
     )
@@ -114,12 +106,11 @@ async def delete_activity(
 @router.post("/{id}/like")
 async def toggle_like(
     id: int,
-    db: AsyncSession = Depends(get_db),
     current_user_id: int = Depends(get_current_authenticated_user),
+    activity_service: ActivityService = Depends(get_activity_service),
 ):
     """Toggle like on an activity by authenticated user."""
-    status_val = await ActivityService.toggle_like(
-        db=db,
+    status_val = await activity_service.toggle_like(
         user_id=current_user_id,
         activity_id=id,
     )
