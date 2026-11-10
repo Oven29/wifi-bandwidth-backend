@@ -27,13 +27,33 @@ class MinioSettings(BaseSettings):
     bucket_name: str
 
 
+class RedisSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_prefix="REDIS_", env_file=".env", extra="ignore"
+    )
+
+    host: str = "localhost"
+    port: int = 6379
+    db: int = 0
+    password: str | None = None
+
+    @property
+    def url(self) -> str:
+        if self.password:
+            return f"redis://:{self.password}@{self.host}:{self.port}/{self.db}"
+        return f"redis://{self.host}:{self.port}/{self.db}"
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    REDIS_URL: str = "redis://localhost:6379/0"
-
+    redis: RedisSettings = Field(default_factory=RedisSettings)
     db: DBSettings = Field(default_factory=DBSettings)
     minio: MinioSettings = Field(default_factory=MinioSettings)
+
+    @property
+    def REDIS_URL(self) -> str:
+        return self.redis.url
 
 
 settings = Settings()
