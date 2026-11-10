@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from src.api.api_v1.network_activities import router as network_activities_router
-from src.api.api_v1.users import router as users_router
+from src.api.v1.network_activities import router as network_activities_router
+from src.api.v1.users import router as users_router
 
 app = FastAPI(
     title="Bandwidth Router Calc API",
