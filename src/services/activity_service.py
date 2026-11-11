@@ -44,18 +44,18 @@ class ActivityService:
         self,
         current_user_id: int | None = None,
         activity_id: int | None = None,
+        current_id: int | None = None,
     ) -> dict:
-        """Fetch an activity for feed view with cyclic pagination, ownership, and like status."""
-        active_activity = await self.activity_repo.get_feed_activity(activity_id)
+        """Fetch an activity for feed view with ownership and like status."""
+        active_activity = await self.activity_repo.get_feed_activity(
+            activity_id=activity_id,
+            current_id=current_id,
+        )
 
         if not active_activity:
             return {
                 "activity": None,
-                "next_id": None,
-                "next_activity_id": None,
             }
-
-        next_activity_id = await self.activity_repo.get_next_published_id(active_activity.id)
 
         existing_like = None
         if current_user_id is not None:
@@ -72,8 +72,6 @@ class ActivityService:
 
         return {
             "activity": activity_resp,
-            "next_id": next_activity_id,
-            "next_activity_id": next_activity_id,
         }
 
     async def get_user_draft(

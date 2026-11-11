@@ -28,9 +28,35 @@ class ActivityRepository(BaseRepository[NetworkActivity]):
         return result.scalars().all()
 
     async def get_feed_activity(
-        self, activity_id: int | None = None
+        self,
+        activity_id: int | None = None,
+        current_id: int | None = None,
     ) -> NetworkActivity | None:
-        """Fetch single published activity for feed, falling back to the first available."""
+        """Fetch published activity for feed: next after current_id, specific activity_id, or first available."""
+        # 1. Скролл ленты: получить следующую активность после current_id (циклически)
+        if current_id is not None:
+            next_result = await self.session.execute(
+                select(NetworkActivity)
+                .where(
+                    NetworkActivity.id > current_id,
+                    NetworkActivity.status == ActivityStatus.PUBLISHED,
+                )
+                .order_by(NetworkActivity.id.asc())
+                .limit(1)
+            )
+            activity = next_result.scalar_one_or_none()
+            if activity:
+                return activity
+
+            wrap_result = await self.session.execute(
+                select(NetworkActivity)
+                .where(NetworkActivity.status == ActivityStatus.PUBLISHED)
+                .order_by(NetworkActivity.id.asc())
+                .limit(1)
+            )
+            return wrap_result.scalar_one_or_none()
+
+        # 2. Клик из плитки: получить конкретную активность по activity_id
         if activity_id is not None:
             result = await self.session.execute(
                 select(NetworkActivity)
@@ -44,6 +70,7 @@ class ActivityRepository(BaseRepository[NetworkActivity]):
             if activity:
                 return activity
 
+        # 3. Дефолт: первая опубликованная активность
         result = await self.session.execute(
             select(NetworkActivity)
             .where(NetworkActivity.status == ActivityStatus.PUBLISHED)

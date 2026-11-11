@@ -23,8 +23,6 @@ class NetworkActivityResponse(BaseModel):
 
 class FeedResponse(BaseModel):
     activity: NetworkActivityResponse | None = None
-    next_id: int | None = None
-    next_activity_id: int | None = None
 
 
 class NetworkActivityPublish(BaseModel):

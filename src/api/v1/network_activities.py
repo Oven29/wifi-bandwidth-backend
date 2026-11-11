@@ -35,13 +35,15 @@ async def list_activities(
 @router.get("/feed", response_model=FeedResponse)
 async def get_feed(
     activity_id: int | None = None,
+    current_id: int | None = None,
     current_user_id: int | None = Depends(get_current_user),
     activity_service: ActivityService = Depends(get_activity_service),
 ):
-    """Retrieve feed item with cyclic next ID, like status, and ownership flag."""
+    """Retrieve feed item by specific activity_id, next after current_id, or first available."""
     return await activity_service.get_feed(
         current_user_id=current_user_id,
         activity_id=activity_id,
+        current_id=current_id,
     )
 
 
