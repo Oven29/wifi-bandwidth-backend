@@ -17,6 +17,7 @@ class NetworkActivityResponse(BaseModel):
     updated_at: datetime | None = None
     is_owner: int = 0
     is_liked: int = 0
+    likes_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -43,6 +43,20 @@ class LikeRepository(BaseRepository[Like]):
         counts = {activity_id: count for activity_id, count in result.all()}
         return {act_id: counts.get(act_id, 0) for act_id in activity_ids}
 
+    async def get_user_liked_activity_ids(
+        self, user_id: int, activity_ids: Sequence[int]
+    ) -> set[int]:
+        """Batch fetch activity IDs liked by specific user."""
+        if not activity_ids:
+            return set()
+        result = await self.session.execute(
+            select(Like.activity_id).where(
+                Like.user_id == user_id,
+                Like.activity_id.in_(activity_ids),
+            )
+        )
+        return set(result.scalars().all())
+
     async def create_like(self, user_id: int, activity_id: int) -> Like:
         """Create and persist a new like."""
         like = Like(user_id=user_id, activity_id=activity_id)

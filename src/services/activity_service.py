@@ -28,8 +28,20 @@ class ActivityService:
         current_user_id: int | None = None,
         filter_traffic: int | None = None,
     ) -> List[NetworkActivityResponse]:
-        """Fetch all published activities, optionally filtered by traffic, calculating ownership."""
+        """Fetch all published activities, optionally filtered by traffic, calculating ownership and likes."""
         activities = await self.activity_repo.get_published_activities(filter_traffic)
+        if not activities:
+            return []
+
+        activity_ids = [act.id for act in activities]
+        likes_counts = await self.like_repo.get_likes_counts(activity_ids)
+
+        user_liked_ids: set[int] = set()
+        if current_user_id is not None:
+            user_liked_ids = await self.like_repo.get_user_liked_activity_ids(
+                user_id=current_user_id,
+                activity_ids=activity_ids,
+            )
 
         response = []
         for act in activities:
@@ -37,6 +49,8 @@ class ActivityService:
             item.is_owner = (
                 1 if current_user_id is not None and act.creator_id == current_user_id else 0
             )
+            item.is_liked = 1 if act.id in user_liked_ids else 0
+            item.likes_count = likes_counts.get(act.id, 0)
             response.append(item)
         return response
 
@@ -46,7 +60,7 @@ class ActivityService:
         activity_id: int | None = None,
         current_id: int | None = None,
     ) -> dict:
-        """Fetch an activity for feed view with ownership and like status."""
+        """Fetch an activity for feed view with ownership, like status, and likes count."""
         active_activity = await self.activity_repo.get_feed_activity(
             activity_id=activity_id,
             current_id=current_id,
@@ -64,11 +78,14 @@ class ActivityService:
                 activity_id=active_activity.id,
             )
 
+        likes_count = await self.like_repo.count_by_activity(active_activity.id)
+
         activity_resp = NetworkActivityResponse.model_validate(active_activity)
         activity_resp.is_owner = (
             1 if current_user_id is not None and active_activity.creator_id == current_user_id else 0
         )
         activity_resp.is_liked = 1 if existing_like else 0
+        activity_resp.likes_count = likes_count
 
         return {
             "activity": activity_resp,
@@ -149,6 +166,7 @@ class ActivityService:
 
         resp = NetworkActivityResponse.model_validate(updated_activity)
         resp.is_owner = 1
+        resp.likes_count = await self.like_repo.count_by_activity(updated_activity.id)
         return resp
 
     async def delete_activity(
